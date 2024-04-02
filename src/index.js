@@ -1,11 +1,20 @@
-import express from "express";
-
+import express from 'express';
 const app = express();
 
-
 // ----- Connect to MongoDB -----
+// async function returns promise
 import connectDB from "./db/index.js";
-connectDB();
+connectDB()
+.then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+        console.log(`Server is running on port ${process.env.PORT}`);
+    });
+})
+.catch((error) => {
+    console.error("MongoDB connection failed!!! ",error);
+    process.exit(1);
+});
+
 
 
 
