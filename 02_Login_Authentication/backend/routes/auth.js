@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userModel } from "../models/User.js";
+import nodemailer from "nodemailer";
 
 const router = express.Router();
 
@@ -52,6 +53,50 @@ router.post("/login", async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Server Error" });
     }
+});
+
+router.post("/forgotpassword", async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await userModel.findOne({email});
+
+        if (!user) {
+            return res.status(400).json({ message: "User does not exist" });
+        }
+
+        // Send email with password reset link using nodemailer
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: "5m" });
+
+        var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "adityasonudz@gmail.com",
+                pass: process.env.PASSWORD,
+            },
+        });
+
+        var mailOptions = {
+            from: "adityasonudz@gmail.com",
+            to: email,
+            subject: "Password Reset",
+            text: `Click on the link to reset your password: http://localhost:5173/resetpassword/${token}`,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
+
+        return res.status(200).json({ status: true, message: "Email sent" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server Error" });
+    }
+
 });
 
 export { router as userRoutes };
