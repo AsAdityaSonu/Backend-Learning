@@ -1,44 +1,55 @@
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #222; /* Dark background color */
+}
+
 .sign-up-container {
-    width: 300px;
-    margin: auto auto;
+    max-width: 600px;
+    width:400px;
+    margin: 0 auto;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    background-color: #222; /* Darker than the page background for contrast */
-}
-
-.sign-up-container h2 {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #333; /* Dark background color */
+  }
+  
+  .sign-up-container h2 {
     text-align: center;
-    color: #fff; /* White text for contrast against dark background */
     margin-bottom: 20px;
-}
-
-.sign-up-container .sign-up-form {
+    color: #fff; /* Text color */
+  }
+  
+  .sign-up-form {
     display: flex;
     flex-direction: column;
-}
-
-.sign-up-container .sign-up-form label {
-    color: #fff; 
+  }
+  
+  .sign-up-form label {
     margin-bottom: 5px;
-}
-
-.sign-up-container .sign-up-form input {
-    width: 100%;
+    color: #fff; /* Text color */
+  }
+  
+  .sign-up-form input {
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     margin-bottom: 15px;
-    background-color: #333; /* Dark input fields for contrast against dark background */
-    color: #fff; /* White text for contrast against dark input field */
-}
-
-.sign-up-container .sign-up-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007BFF; /* Blue button for contrast and attention */
-    color: white;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff; /* Input background color */
+  }
+  
+  .sign-up-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
-}
+  }
+  
+  .sign-up-form button:hover {
+    background-color: #0056b3;
+  }
+  
