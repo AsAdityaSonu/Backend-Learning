@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function Home() {
+    axios.defaults.withCredentials = true;
     const handleLogout = async () => {
         axios
             .get("http://localhost:3000/api/logout")
