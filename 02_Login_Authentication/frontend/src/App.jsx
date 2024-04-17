@@ -5,6 +5,7 @@ import Login from './components/Login'
 import Home from './components/Home'
 import ForgotPassword from './components/ForgotPassword'
 import ResetPassword from './components/ResetPassword'
+import Dashboard from './components/Dashboard'
 
 
 
@@ -18,6 +19,8 @@ function App() {
         <Route path="/login" element={<h1> <Login /> </h1>} />
         <Route path="/forgotpassword" element={<h1> <ForgotPassword /> </h1>} />
         <Route path="/resetPassword/:token" element={<h1> <ResetPassword /> </h1>} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>
   )

@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/signup", async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        const user = await userModel.findOne({ email }); // Added await 
+        const user = await userModel.findOne({ email }); // Added await
 
         if (user) {
             return res.status(400).json({ message: "User already exists" });
@@ -23,8 +23,9 @@ router.post("/signup", async (req, res) => {
         });
 
         await newUser.save();
-        return res.status(201).json({ status:true, message: "User created successfully" });
-
+        return res
+            .status(201)
+            .json({ status: true, message: "User created successfully" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server Error" });
@@ -34,7 +35,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await userModel.findOne({email});
+        const user = await userModel.findOne({ email });
 
         if (!user) {
             return res.status(400).json({ message: "User does not exist" });
@@ -46,9 +47,12 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ email: user.email}, process.env.JWT_SECRET, { expiresIn: "1h" });
-        return res.cookie("token", token, { httpOnly: true }).json({status: true, message: "Login successful" });
-
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+        return res
+            .cookie("token", token, { httpOnly: true })
+            .json({ status: true, message: "Login successful" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server Error" });
@@ -58,14 +62,16 @@ router.post("/login", async (req, res) => {
 router.post("/forgotpassword", async (req, res) => {
     try {
         const { email } = req.body;
-        const user = await userModel.findOne({email});
+        const user = await userModel.findOne({ email });
 
         if (!user) {
             return res.status(400).json({ message: "User does not exist" });
         }
 
         // Send email with password reset link using nodemailer
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "5m" });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "5m",
+        });
 
         var transporter = nodemailer.createTransport({
             service: "gmail",
@@ -91,12 +97,10 @@ router.post("/forgotpassword", async (req, res) => {
         });
 
         return res.status(200).json({ status: true, message: "Email sent" });
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server Error" });
     }
-
 });
 
 router.post("/resetpassword/:token", async (req, res) => {
@@ -107,17 +111,49 @@ router.post("/resetpassword/:token", async (req, res) => {
         return res.status(400).json({ message: "Invalid token" });
     }
 
-    try{
+    try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const id = decoded.id;
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await userModel.findByIdAndUpdate({_id: id}, { password: hashedPassword });
-        return res.status(200).json({ status: true, message: "Password reset successful" });
-    }catch (error) {
+        await userModel.findByIdAndUpdate(
+            { _id: id },
+            { password: hashedPassword }
+        );
+        return res
+            .status(200)
+            .json({ status: true, message: "Password reset successful" });
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server Error" });
     }
+});
+
+// -------------- Protected Route --------------
+const verifyUser = (req, res, next) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(401).json({ status: false, message: "Unauthorized" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        next();
+    } catch (error) {
+        console.error(error);
+        res.status(401).json({ message: "Unauthorized" });
+    }
+};
+
+router.get("/verify", verifyUser, (req, res) => {
+    res.status(200).json({ status: true, message: "Verified" });
+});
+
+
+// -------------- Logout Route --------------
+router.get("/logout", (req, res) => {
+    res.clearCookie("token").json({ status: true, message: "Logged out" });
 });
 
 export { router as userRoutes };
